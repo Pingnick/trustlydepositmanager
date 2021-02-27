@@ -1,4 +1,4 @@
-package se.test.trustlydepositmanager.rest.trustly;
+package se.test.trustlydepositmanager.rest.tools;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;

@@ -17,6 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import se.test.trustlydepositmanager.exceptions.APISignatureException;
 import se.test.trustlydepositmanager.service.security.KeyChainService;
 
 import java.io.File;
@@ -78,18 +79,13 @@ public class KeyChainServiceTests {
             return base64Encoder.encodeToString(signature);
         }
         catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
-            System.out.println("UnsupportedEncodingException | NoSuchAlgorithmException: " + e);
-            throw new UnsupportedEncodingException("UnsupportedEncodingException | NoSuchAlgorithmException: " + e);
-
-            //throw new TrustlySignatureException(e);
+            throw new APISignatureException(e);
         }
         catch (final InvalidKeyException e) {
-            System.out.println("Invalid private key: " + e);
-            throw new InvalidKeyException("Invalid private key", e);
+            throw new APISignatureException("Invalid private key", e);
         }
         catch (final SignatureException e) {
-            System.out.println("Failed to create signature: " + e);
-            throw new SignatureException("Failed to create signature", e);
+            throw new APISignatureException("Failed to create signature", e);
         }
 
     }
@@ -105,25 +101,18 @@ public class KeyChainServiceTests {
             return signatureInstance.verify(signature);
         }
         catch (final IOException e) {
-            System.out.println("Failed to decode signature: " + e);
-            //throw new TrustlySignatureException("Failed to decode signature", e);
+            throw new APISignatureException("Failed to decode signature", e);
         }
         catch (final NoSuchAlgorithmException e) {
-            System.out.println("NoSuchAlgorithmException: " + e);
-            //throw new TrustlySignatureException(e);
+            throw new APISignatureException(e);
         }
         catch (final InvalidKeyException e) {
-            System.out.println("Invalid public key" + e);
-            //throw new TrustlySignatureException("Invalid public key", e);
+            throw new APISignatureException("Invalid public key", e);
         }
         catch (final SignatureException e) {
-
-            System.out.println("Failed to verify signature" + e);
-            //throw new TrustlySignatureException("Failed to verify signature", e);
+            throw new APISignatureException("Failed to verify signature", e);
         }
 
-
-        return false;
     }
 
     private PublicKey getTestPublicKey(String  publicKeyPath) {

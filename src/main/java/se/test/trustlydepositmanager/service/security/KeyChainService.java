@@ -6,6 +6,7 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMDecryptorProvider;
 import org.bouncycastle.openssl.PEMEncryptedKeyPair;
+import org.bouncycastle.openssl.PEMException;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
+import se.test.trustlydepositmanager.exceptions.APISignatureException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -40,18 +42,15 @@ public class KeyChainService {
                            @Value(value = "${tdm.api.security.private_key.password:Hello2}") String privateKeyPassword,
                            @Value(value = "${tdm.api.security.public_key.path:Hello2}") String publicKeyPath
                            ) {
-        try {
-            loadApiPublicKey(publicKeyPath);
-            loadServicePrivateKey(privateKeyPath, privateKeyPassword);
 
-        } catch (KeyException e) {
-            e.printStackTrace();
-        }
+        loadApiPublicKey(publicKeyPath);
+        loadServicePrivateKey(privateKeyPath, privateKeyPassword);
+
     }
 
 
-    // TODO: Replace with: https://www.baeldung.com/java-read-pem-file-keys
-    private void loadApiPublicKey(String publicKeyPath) {
+    // TODO: Replace with: https://www.baeldung.com/java-read-pem-file-keys?
+    private void loadApiPublicKey(String publicKeyPath) throws APISignatureException {
 
         try {
             final File file = new File(publicKeyPath);
@@ -69,14 +68,14 @@ public class KeyChainService {
 
              apiPublicKey = converter.getPublicKey(subjectPublicKeyInfo);
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        } catch (FileNotFoundException e){
+            throw new APISignatureException("N/A", "Unable to find public key file", e);
         } catch (IOException e) {
-             e.printStackTrace();
+            throw new APISignatureException("Unable to load API's public key", e);
         }
     }
 
-    void loadServicePrivateKey(final String privateKeyFileName, final String password) throws KeyException {
+    void loadServicePrivateKey(final String privateKeyFileName, final String password) {
 
         try {
             final File servicePrivateKeyFile = new File(privateKeyFileName);
@@ -101,9 +100,11 @@ public class KeyChainService {
             privateKey = keyPair.getPrivate();
 
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            throw new APISignatureException("N/A", "Unable to find private key file", e);
+        } catch (PEMException e) {
+            throw new APISignatureException("N/A", "Unable to convert private keypair", e);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new APISignatureException(e);
         }
     }
 
