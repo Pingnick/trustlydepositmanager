@@ -13,15 +13,11 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
 import org.springframework.format.annotation.DateTimeFormat;
-import se.test.trustlydepositmanager.config.ZonedDateTimeConfiguration;
-import se.test.trustlydepositmanager.rest.trustly.ZonedDateTimeJsonDeserializer;
-import se.test.trustlydepositmanager.rest.trustly.ZonedDateTimeJsonSerializer;
+import se.test.trustlydepositmanager.rest.tools.ZonedDateTimeJsonDeserializer;
+import se.test.trustlydepositmanager.rest.tools.ZonedDateTimeJsonSerializer;
 import se.test.trustlydepositmanager.rest.trustly.notifications.requests.NotificationRequestData;
 
-import javax.validation.constraints.Size;
-import java.math.BigDecimal;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter

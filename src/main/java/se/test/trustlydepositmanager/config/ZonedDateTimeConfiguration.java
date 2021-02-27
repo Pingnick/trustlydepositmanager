@@ -7,7 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import se.test.trustlydepositmanager.rest.trustly.ZonedDateTimeJsonSerializer;
+import se.test.trustlydepositmanager.rest.tools.ZonedDateTimeJsonSerializer;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
