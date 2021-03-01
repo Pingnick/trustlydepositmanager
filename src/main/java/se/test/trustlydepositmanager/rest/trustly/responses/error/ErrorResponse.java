@@ -1,39 +1,30 @@
-package se.test.trustlydepositmanager.rest.trustly.notifications.requests;
+package se.test.trustlydepositmanager.rest.trustly.responses.error;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
+import se.test.trustlydepositmanager.rest.trustly.responses.Response;
 
 @Getter
 @Setter
-@ToString
-@EqualsAndHashCode
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)
 @Jacksonized
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder(alphabetic = true)
-public class NotificationRequestParameters {
+public class ErrorResponse extends Response {
 
-    @NonNull
-    @JsonProperty("signature")
-    String signature;
+    @JsonProperty("errorResult")
+    ErrorResult errorResult;
 
-    @NonNull
-    @JsonProperty("uuid")
-    String uuid;
 
-    @NonNull
-    @JsonProperty("data")
-    NotificationRequestData notificationRequestData;
 }

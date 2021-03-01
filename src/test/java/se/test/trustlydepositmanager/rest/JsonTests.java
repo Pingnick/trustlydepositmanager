@@ -11,6 +11,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import se.test.trustlydepositmanager.rest.trustly.requests.deposit.Attributes;
+import se.test.trustlydepositmanager.rest.trustly.responses.DepositResponse;
+import se.test.trustlydepositmanager.rest.trustly.responses.DepositResultData;
 import se.test.trustlydepositmanager.rest.trustly.responses.ResponseStatus;
 import se.test.trustlydepositmanager.rest.trustly.notifications.requests.NotificationRequestParameters;
 import se.test.trustlydepositmanager.rest.trustly.notifications.requests.data.CancelNotificationRequestData;
@@ -24,6 +26,11 @@ import se.test.trustlydepositmanager.rest.trustly.requests.RequestParameters;
 import se.test.trustlydepositmanager.rest.trustly.notifications.requests.NotificationRequest;
 import se.test.trustlydepositmanager.rest.trustly.notifications.requests.data.CreditNotificationRequestData;
 import se.test.trustlydepositmanager.rest.trustly.notifications.responses.NotificationResponse;
+import se.test.trustlydepositmanager.rest.trustly.responses.DepositResult;
+import se.test.trustlydepositmanager.rest.trustly.responses.error.ErrorBody;
+import se.test.trustlydepositmanager.rest.trustly.responses.error.ErrorData;
+import se.test.trustlydepositmanager.rest.trustly.responses.error.ErrorResponse;
+import se.test.trustlydepositmanager.rest.trustly.responses.error.ErrorResult;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -48,6 +55,12 @@ public class JsonTests {
     private static final String SIGNATURE = "MOCK_SIGNATURE";
     private static final String ORDER_ID = "MOCK_ORDER_ID";
     private static final String NOTIFICATION_ID = "MOCK_ORDER_ID";
+    private static final String USER_NAME = "MOCK_USER_NAME";
+    private static final String ERROR_CODE = "616";
+    private static final String ERROR_MESSAGE = "ERROR_INVALID_CREDENTIALS";
+
+    private static final String URL = "https://trustly.com/_/213131231231--123-23123-13";
+
 
     private static final ZonedDateTime ZONED_DATE_TIME = ZonedDateTime.now(); //ZonedDateTime.parse("2020-01-20 14:42:04.675645+01");
             //ZonedDateTime.of(2021, 1, 20, 14, 20,4,300, ZoneId.systemDefault());
@@ -93,9 +106,9 @@ public class JsonTests {
                 .attributes(attributes)
                 .endUserId(ENDUSER_ID)
                 .messageId(MESSAGE_ID)
+                .userName(USER_NAME)
                 .notificationURL(NOTIFICATION_URL)
                 .password("Test")
-                .userName("Testuser")
                 .build();
 
         RequestParameters requestParameters = RequestParameters.builder()
@@ -194,8 +207,7 @@ public class JsonTests {
     @Test
     @DisplayName("Create Debit Notification Request from JSON, Happy Case")
     public void createDebitNotificationRequestFromJsonString_HappyCaseTest() throws Exception {
-
-
+        
         NotificationRequest debitNotificationRequest = NotificationRequest.builder()
                 .method("debit")
                 .notificationRequestParameters(NotificationRequestParameters.builder()
@@ -292,6 +304,77 @@ public class JsonTests {
         NotificationRequest restoredCancelNotificationRequest = objectMapper.readValue(jsonCancelNotificationRequest, NotificationRequest.class);
 
         System.out.println("Reassembled object: " + restoredCancelNotificationRequest);
+
+    }
+
+    @Test
+    @DisplayName("Create Deposit Response from JSON, Happy Case")
+    public void createDepositResponseFromJson_HappyCaseTest() throws Exception {
+
+
+        DepositResponse depositResponse = DepositResponse.builder()
+                .result(DepositResult.builder()
+                        .signature(SIGNATURE)
+                        .method("Deposit")
+                        .uuid(MOCK_UUID)
+                        .data(DepositResultData.builder()
+                                .orderId(ORDER_ID)
+                                .url(URL)
+                                .build())
+                        .build())
+                .build();
+
+        System.out.println("Deposit Response:" + depositResponse);
+
+        objectMapper = new ObjectMapper();
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        String jsonDepositResponse = objectMapper.writeValueAsString(depositResponse);
+
+        System.out.println("JSON Deposit Response: " + jsonDepositResponse);
+
+        DepositResponse responseObject = objectMapper.readValue(jsonDepositResponse, DepositResponse.class);
+
+        System.out.println("Reassembled object: " + responseObject);
+
+        System.out.println(depositResponse.equals(responseObject));
+
+    }
+
+    @Test
+    @DisplayName("Create Error Response from JSON, Happy Case")
+    public void createErrorResponseFromJson_HappyCaseTest() throws Exception {
+
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorResult(ErrorResult.builder()
+                        .name("JSONRPCError")
+                        .code(ERROR_CODE)
+                        .message(ERROR_MESSAGE)
+                        .errorBody(ErrorBody.builder()
+                                .signature(MOCK_UUID)
+                                .uuid(MOCK_UUID)
+                                .method("Deposit")
+                                .errorData(ErrorData.builder()
+                                        .code(ERROR_CODE)
+                                        .message(ERROR_MESSAGE)
+                                        .build())
+                                .build())
+                        .build())
+                .build();
+
+        System.out.println("Error Response:" + errorResponse);
+
+        objectMapper = new ObjectMapper();
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        String jsonErrorResponse = objectMapper.writeValueAsString(errorResponse);
+
+        System.out.println("JSON Deposit Response: " + jsonErrorResponse);
+
+        ErrorResponse responseObject = objectMapper.readValue(jsonErrorResponse, ErrorResponse.class);
+
+        System.out.println("Reassembled object: " + responseObject);
+
+        System.out.println(errorResponse.equals(responseObject));
 
     }
 

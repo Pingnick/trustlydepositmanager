@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -25,6 +26,15 @@ import java.math.BigDecimal;
 @Jacksonized
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder(alphabetic = true)
+/*
+@JsonPropertyOrder({"amount", "chargeAccountId", "country", "currency", "email", "externalReference", "failURL",
+        "firstName", "ip", "lastName", "locale", "mobilePhone", "nationalIdentificationNumber", "quickDeposit",
+        "recipientInformation", "requestDirectDebitMandate", "shippingAddress", "shippingAddressCity",
+        "shippingAddressCountry", "shippingAdressLine1", "shippingAdressLine2", "shippingAddressPostalCode",
+        "shopperStatement", "successURL", "suggestedMaxAmount", "suggestedMinAmount", "templateURL", "urlTarget",
+        "", "", "", ""})
+*/
 public class Attributes {
 
     @JsonProperty("Currency")

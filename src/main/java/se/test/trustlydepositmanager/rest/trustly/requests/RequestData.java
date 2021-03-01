@@ -16,15 +16,5 @@ import se.test.trustlydepositmanager.rest.trustly.requests.deposit.Attributes;
 @SuperBuilder(toBuilder = true)
 public abstract class RequestData {
 
-    @JsonProperty("Username")
-    @NonNull
-    String userName;
 
-    @JsonProperty("Password")
-    @NonNull
-    String password;
-
-    @JsonProperty("Attributes")
-    @NonNull
-    Attributes attributes;
 }

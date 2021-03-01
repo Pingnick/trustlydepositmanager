@@ -10,12 +10,8 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @ToString
 @SuperBuilder(toBuilder = true)
-public abstract class DepositResponseData {
+public abstract class ResponseData {
 
-    @JsonProperty("signature")
-    String signature;
 
-    @JsonProperty("uuid")
-    String uuid;
 
 }
