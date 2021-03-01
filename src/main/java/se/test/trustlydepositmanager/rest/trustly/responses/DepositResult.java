@@ -1,13 +1,11 @@
-package se.test.trustlydepositmanager.rest.trustly.requests;
+package se.test.trustlydepositmanager.rest.trustly.responses;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
@@ -15,6 +13,7 @@ import lombok.extern.jackson.Jacksonized;
 
 
 @Getter
+@Setter
 @ToString
 @EqualsAndHashCode
 @NoArgsConstructor
@@ -22,26 +21,17 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class RequestParameters {
+public class DepositResult {
 
-    @Setter
-    @JsonProperty("Signature")
+    @JsonProperty("signature")
     String signature;
 
-    @JsonProperty("UUID")
-    @NonNull
+    @JsonProperty("uuid")
     String uuid;
 
-    @JsonProperty("Data")
-    @NonNull
-    RequestData data;
+    @JsonProperty("method")
+    String method;
 
-    /*
-    public abstract static class RequestParametersBuilder <C extends RequestParameters, D extends RequestParametersBuilder<C,D>> {
-
-        public RequestParametersBuilder() {
-            uuid(UUID.randomUUID().toString());
-        }
-    }
-    */
+    @JsonProperty("data")
+    DepositResultData data;
 }

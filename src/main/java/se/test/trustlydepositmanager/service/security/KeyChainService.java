@@ -12,6 +12,8 @@ import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
 import org.bouncycastle.util.io.pem.PemObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -22,7 +24,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.security.KeyException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -31,6 +32,8 @@ import java.security.PublicKey;
 @PropertySource("classpath:application-test.properties")
 public class KeyChainService {
 
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+
     @Getter
     private PrivateKey privateKey;
 
@@ -38,15 +41,17 @@ public class KeyChainService {
     private PublicKey apiPublicKey;
 
     @Autowired
-    public KeyChainService(@Value(value = "${tdm.api.security.private_key.path:Hello}") String privateKeyPath,
-                           @Value(value = "${tdm.api.security.private_key.password:Hello2}") String privateKeyPassword,
-                           @Value(value = "${tdm.api.security.public_key.path:Hello2}") String publicKeyPath
+    public KeyChainService(@Value(value = "${tdm.api.security.private_key.path:\"\"}") String privateKeyPath,
+                           @Value(value = "${tdm.api.security.private_key.password}:\"\"") String privateKeyPassword,
+                           @Value(value = "${tdm.api.security.public_key.path:\"\"}") String publicKeyPath
                            ) {
 
         loadApiPublicKey(publicKeyPath);
         loadServicePrivateKey(privateKeyPath, privateKeyPassword);
 
     }
+
+
 
 
     // TODO: Replace with: https://www.baeldung.com/java-read-pem-file-keys?
@@ -63,7 +68,7 @@ public class KeyChainService {
 
             final byte[] encoded = object.getContent();
 
-             final SubjectPublicKeyInfo subjectPublicKeyInfo = new SubjectPublicKeyInfo(
+            final SubjectPublicKeyInfo subjectPublicKeyInfo = new SubjectPublicKeyInfo(
                      ASN1Sequence.getInstance(encoded));
 
              apiPublicKey = converter.getPublicKey(subjectPublicKeyInfo);
@@ -87,12 +92,16 @@ public class KeyChainService {
             final PEMDecryptorProvider pemDecryptorProvider = new JcePEMDecryptorProviderBuilder()
                     .build(password.toCharArray());
 
+            //pemDecryptorProvider.
+
+
             final JcaPEMKeyConverter jcaPEMKeyConverter = new JcaPEMKeyConverter();
 
             final KeyPair keyPair;
 
             if (object instanceof PEMEncryptedKeyPair) {
-                keyPair = jcaPEMKeyConverter.getKeyPair(((PEMEncryptedKeyPair) object).decryptKeyPair(pemDecryptorProvider));
+                keyPair = jcaPEMKeyConverter.getKeyPair(((PEMEncryptedKeyPair) object)
+                        .decryptKeyPair(pemDecryptorProvider));
             } else {
                 keyPair = jcaPEMKeyConverter.getKeyPair((PEMKeyPair) object);
             }

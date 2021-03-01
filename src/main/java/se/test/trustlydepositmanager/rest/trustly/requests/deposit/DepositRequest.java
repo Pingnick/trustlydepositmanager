@@ -25,7 +25,6 @@ public class DepositRequest extends Request {
         public DepositRequestBuilder() {
 
             method("Deposit");
-
         }
 
     }

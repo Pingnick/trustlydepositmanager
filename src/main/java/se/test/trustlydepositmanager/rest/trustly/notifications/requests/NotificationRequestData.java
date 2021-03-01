@@ -1,6 +1,7 @@
 package se.test.trustlydepositmanager.rest.trustly.notifications.requests;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
@@ -26,7 +27,6 @@ import se.test.trustlydepositmanager.rest.trustly.notifications.requests.data.Pe
     include = JsonTypeInfo.As.PROPERTY,
     property = "type"
 )
-
 @JsonSubTypes({
         @JsonSubTypes.Type(value = AccountNotificationRequestData.class, name = "accountNotificationRequestData"),
         @JsonSubTypes.Type(value = CancelNotificationRequestData.class, name = "cancelNotificationRequestData"),
@@ -34,6 +34,7 @@ import se.test.trustlydepositmanager.rest.trustly.notifications.requests.data.Pe
         @JsonSubTypes.Type(value = DebitNotificationRequestData.class, name = "debitNotificationRequestData"),
         @JsonSubTypes.Type(value = PendingNotificationRequestData.class, name = "pendingNotificationRequestData")
 })
+@JsonPropertyOrder(alphabetic = true)
 public abstract class NotificationRequestData {
 
     public static final String DATE_STRING_PATTERN = "yyyy-MM-dd' 'HH:mm:ss.SSSSSSX";
