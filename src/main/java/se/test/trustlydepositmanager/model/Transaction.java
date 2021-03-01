@@ -11,7 +11,7 @@ import javax.persistence.Id;
 @Builder
 @AllArgsConstructor
 @Entity
-public class Deposit {
+public class Transaction {
 
     @Id
     String id;

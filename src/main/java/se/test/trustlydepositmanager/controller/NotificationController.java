@@ -14,43 +14,54 @@ import se.test.trustlydepositmanager.rest.trustly.notifications.requests.Notific
 import se.test.trustlydepositmanager.rest.trustly.notifications.responses.NotificationResponseResult;
 import se.test.trustlydepositmanager.rest.trustly.notifications.responses.NotificationResponseResultData;
 import se.test.trustlydepositmanager.rest.trustly.notifications.responses.NotificationResponse;
-import se.test.trustlydepositmanager.service.DepositService;
+import se.test.trustlydepositmanager.service.NotificationService;
+import se.test.trustlydepositmanager.service.RequestService;
+import se.test.trustlydepositmanager.service.security.SigningService;
+
 import javax.validation.Valid;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/responses")
+@RequestMapping("/notifications")
 public class NotificationController {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    DepositService depositService;
+    SigningService signingService;
+
+    @Autowired
+    NotificationService notificationService;
 
     @RequestMapping(value = "/credit", consumes = MediaType.APPLICATION_JSON_VALUE,
     produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
     public ResponseEntity<NotificationResponse> getCreditNotifications(
             @Valid @RequestBody NotificationRequest notificationRequest) {
 
-        LOGGER.info("Recieved a credit notification from Trustly:" + notificationRequest);
+        LOGGER.info("Recieved a credit notification from Trustly: " + notificationRequest);
 
+        String correlationUuid = UUID.randomUUID().toString();
+        String uuid = notificationRequest.getNotificationRequestParameters().getUuid();
+        String method = notificationRequest.getMethod();
+        String notificationId = notificationRequest.getNotificationRequestParameters().getNotificationRequestData()
+                .getNotificationId();
+        String messageId = notificationRequest.getNotificationRequestParameters().getNotificationRequestData()
+                .getMessageId();
 
-        String signature = ""; // TODO: Fix
+        LOGGER.info("Created CorrelationUuid: {} for notificationId: {} with messageId: {}", correlationUuid,
+                notificationId, messageId);
 
-        // TODO: Handle information
+        notificationService.handleCreditNotification(notificationRequest, correlationUuid);
 
-
-        return ResponseEntity.ok(createNotificationResponse(ResponseStatus.OK,
-                notificationRequest.getNotificationRequestParameters().getUuid(), signature, 
-                notificationRequest.getMethod()));
+        return ResponseEntity.ok(createNotificationResponse(ResponseStatus.OK, uuid, method));
     }
 
 
 
     private NotificationResponse createNotificationResponse(ResponseStatus responseStatus, String notificationUuid,
-                                                            String signature, String method) {
-        return NotificationResponse.builder()
+                                                            String method) {
+        NotificationResponse notificationResponse = NotificationResponse.builder()
                 .result(NotificationResponseResult.builder()
-                        .signature(signature)
                         .uuid(notificationUuid)
                         .method(method)
                         .data(NotificationResponseResultData.builder()
@@ -58,6 +69,10 @@ public class NotificationController {
                                 .build())
                         .build())
                 .build();
+
+        signingService.signNotificationResponse(notificationResponse);
+
+        return notificationResponse;
     }
 
 }

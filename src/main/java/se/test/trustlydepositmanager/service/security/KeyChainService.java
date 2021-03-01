@@ -42,7 +42,7 @@ public class KeyChainService {
 
     @Autowired
     public KeyChainService(@Value(value = "${tdm.api.security.private_key.path:\"\"}") String privateKeyPath,
-                           @Value(value = "${tdm.api.security.private_key.password}:\"\"") String privateKeyPassword,
+                           @Value(value = "${tdm.api.security.password}:\"\"") String privateKeyPassword,
                            @Value(value = "${tdm.api.security.public_key.path:\"\"}") String publicKeyPath
                            ) {
 

@@ -2,12 +2,10 @@ package se.test.trustlydepositmanager.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import se.test.trustlydepositmanager.model.Deposit;
-
-import java.util.List;
+import se.test.trustlydepositmanager.model.Transaction;
 
 @Repository
-public interface DepositRepository extends JpaRepository<Deposit, Long> {
+public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
 
 }

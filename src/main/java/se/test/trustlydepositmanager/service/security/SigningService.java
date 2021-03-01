@@ -47,19 +47,23 @@ public class SigningService {
     private String publicKeyPath;
 
     @Getter
-    @Value("${tdm.api.security.private_key.password}")
-    private String privateKeyPassword;
-
-    @Getter
     @Value("${tdm.api.security.private_key.path}")
     private String privateKeyPath;
+
+    @Getter
+    @Value("${tdm.api.security.password}")
+    private String password;
+
+    @Getter
+    @Value("${tdm.api.security.username}")
+    private String userName;
 
     private final Base64.Encoder base64Encoder = Base64.getEncoder();
     private final Base64.Decoder base64Decoder = Base64.getDecoder();
 
-
     @Autowired
     private KeyChainService keyChainService;
+
 
     public void signNotificationResponse(final NotificationResponse notificationResponse) {
         String method = notificationResponse.getResult().getMethod();
